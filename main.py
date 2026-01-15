@@ -107,7 +107,10 @@ async def list_items(request: Request) -> JSONResponse:
 @app.post("/items", status_code=status.HTTP_201_CREATED)
 async def create_item(payload: ItemIn, request: Request) -> JSONResponse:
     item = store.add_item(payload.name)
-    return JSONResponse({"item": item.model_dump(), "request_id": request.state.request_id})
+    return JSONResponse(
+        {"item": item.model_dump(), "request_id": request.state.request_id},
+        status_code=status.HTTP_201_CREATED,
+    )
 
 
 @app.get("/metrics")
