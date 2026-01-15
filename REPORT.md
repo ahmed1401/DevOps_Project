@@ -25,6 +25,13 @@ Dev → GitHub (Issues/PRs/Reviews)
 Observability: JSON logs + Prometheus metrics (/metrics)
 ```
 
+## Runtime view
+```
+Client → FastAPI (in-memory store)
+		 ├→ JSON logs (stdout, includes request_id)
+		 └→ /metrics scraped by Prometheus
+```
+
 ## Tooling Justification
 - Python 3.11 + FastAPI + Uvicorn: modern async stack, minimal boilerplate, OpenAPI auto-docs; fits small footprint.
 - Prometheus client: standard metrics exposition for SRE-style monitoring.
@@ -49,6 +56,11 @@ Observability: JSON logs + Prometheus metrics (/metrics)
 - Service: ClusterIP on port 80 → 8000.
 - Local access (minikube): `minikube service devops-api --url`.
 - Suggested hardening: pin image to digest, add resource requests/limits, configure HPA when load testing.
+
+## Security & DAST notes (ZAP baseline)
+- Target (example): https://avon-folders-reaches-weeks.trycloudflare.com
+- Findings (WARN only): cache-control re-examine, missing X-Content-Type-Options, missing HSTS, cacheable content, Spectre isolation header missing, Sec-Fetch-Dest missing (and 404s for robots/sitemap).
+- Mitigations: set `X-Content-Type-Options: nosniff`, add HSTS when fronted by HTTPS, tighten cache headers on API responses.
 
 ## Lessons Learned / Future Work
 - Tag immutably for k8s (`:sha` or digest) to avoid drift; promote via environments.

@@ -1,5 +1,7 @@
 """Minimal FastAPI app with JSON logs, request IDs, and Prometheus metrics."""
 
+# Core FastAPI service with request correlation and metrics to demonstrate DevOps patterns.
+
 import json
 import logging
 import time
@@ -13,15 +15,18 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, PlainTextResponse
 
 
+# Emit plain JSON log lines for easy ingestion by log collectors.
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("app")
 
 
+# Count HTTP calls by method/path/status for simple dashboards/alerts.
 REQUEST_COUNT = Counter(
     "http_requests_total",
     "Total HTTP requests",
     ["method", "path", "status"],
 )
+# Track latency per route to spot slow endpoints.
 REQUEST_LATENCY = Histogram(
     "http_request_latency_seconds",
     "Latency per HTTP request",
@@ -42,14 +47,17 @@ class ItemOut(ItemIn):
 
 
 class InMemoryStore:
+    """Toy in-memory item store (no persistence)."""
     def __init__(self) -> None:
         self._items: List[ItemOut] = []
         self._next_id = 1
 
     def list_items(self) -> List[ItemOut]:
         return self._items
+    # Global middleware registration keeps handlers simple.
 
     def add_item(self, name: str) -> ItemOut:
+    # ---- API Routes ----
         item = ItemOut(id=self._next_id, name=name)
         self._items.append(item)
         self._next_id += 1
@@ -61,6 +69,7 @@ app = FastAPI(title="DevOps Demo API", version="1.0.0")
 
 
 class RequestContextMiddleware(BaseHTTPMiddleware):
+    """Attach request_id, record metrics, and log each request."""
     async def dispatch(self, request: Request, call_next):
         request_id = _request_id(request)
         request.state.request_id = request_id

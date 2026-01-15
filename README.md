@@ -78,6 +78,17 @@ docker run -p 8000:8000 docker.io/ahmedhajjej/devops-api:local
 - Jobs: pytest; Semgrep (warning mode); build/push image (only on main pushes) to `docker.io/ahmedhajjej/devops-api:{latest,sha}`; ZAP baseline placeholder.
 - Secrets needed: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
 - Re-run CI: open GitHub → Actions → select latest run → "Re-run all jobs" after updating secrets.
+- ZAP baseline: set repo variable `ZAP_TARGET` to the live URL (e.g., your trycloudflare link), keep tunnel running, then push to `main`.
+- ZAP artifacts: open the workflow run → Artifacts → `zap_scan` to download HTML/MD/JSON reports.
+
+### Public tunnel quick start (for ZAP)
+1) Run the service locally or in minikube and expose it (e.g., `minikube service devops-api --url`).
+2) Start a quick tunnel (Windows example):
+	```powershell
+	& "C:\Program Files (x86)\cloudflared\cloudflared.exe" tunnel --url http://127.0.0.1:PORT_FROM_STEP1
+	```
+3) Copy the issued `https://<something>.trycloudflare.com` URL to the repo variable `ZAP_TARGET`.
+4) Push to `main` to trigger ZAP; keep the tunnel terminal open until the run finishes.
 
 ## 9) Observability
 - Logs: JSON to stdout with request_id, method, path, status, latency_ms.
@@ -97,6 +108,7 @@ docker run -p 8000:8000 docker.io/ahmedhajjej/devops-api:local
 - CI push failure: ensure Docker Hub secrets exist and branch is `main` for push stage.
 - Import errors locally: activate venv and run from repo root.
 - Probes failing: increase `initialDelaySeconds` in deployment.
+- ZAP "Resource not accessible by integration": we disabled issue creation; ensure `ZAP_TARGET` is set as a repo variable (not a secret) and tunnel stays up during the run.
 
 ## 13) Future Improvements
 - Pin k8s image to digests/tags per release.
