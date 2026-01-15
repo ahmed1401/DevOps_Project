@@ -63,9 +63,9 @@ jobs:
   zap-dast:
     runs-on: ubuntu-latest
     needs: test-and-scan                # changed to test-and-scan for feature branches
-    if: github.event_name == 'push' && env.ZAP_TARGET != ''
+    if: github.event_name == 'push' && vars.ZAP_TARGET != ''
     env:
-      ZAP_TARGET: ${{ secrets.ZAP_TARGET }}
+      ZAP_TARGET: ${{ vars.ZAP_TARGET }}
     permissions:
       contents: write
       issues: write
