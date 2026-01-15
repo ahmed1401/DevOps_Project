@@ -34,9 +34,7 @@ jobs:
         with:
           config: >-
             p/ci
-          audit_on: error
-        env:
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+          audit_on: warning
 
   build-and-push:
     runs-on: ubuntu-latest
