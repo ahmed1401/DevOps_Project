@@ -34,7 +34,7 @@ jobs:
         with:
           config: >-
             p/ci
-          audit_on: warning
+          auditOn: warning
 
   build-and-push:
     runs-on: ubuntu-latest
