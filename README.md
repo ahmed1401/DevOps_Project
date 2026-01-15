@@ -57,6 +57,16 @@ uvicorn main:app --reload --port 8000
 pytest
 ```
 
+## 6.1) Smoke Test (minikube tunnel)
+Keep `minikube service devops-api --url` running in a separate terminal to expose the ClusterIP service. Use these from PowerShell:
+```powershell
+curl.exe "http://127.0.0.1:57227/health"
+curl.exe -X POST "http://127.0.0.1:57227/items" -H "Content-Type: application/json" --data-raw "{\"name\":\"test\"}"
+curl.exe "http://127.0.0.1:57227/items"
+curl.exe "http://127.0.0.1:57227/metrics" | Select-String http_requests_total -Context 0,2
+```
+Replace the URL/port with the value printed by `minikube service devops-api --url`.
+
 ## 7) Docker
 ```bash
 docker build -t docker.io/ahmedhajjej/devops-api:local .
