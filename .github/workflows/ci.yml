@@ -82,13 +82,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           allow_issue_writing: false       # prevents GitHub integration errors
           fail_action: false               # never fail workflow on scan issues
+          artifact_name: zap-scan
         env:
           JAVA_OPTS: -Xmx1g
 
       - name: Upload ZAP reports manually
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-reports            # artifact name now valid everywhere
+          name: zap-scan-reports            # artifact name hyphenated
           path: |
             report_json.json
             report_md.md
