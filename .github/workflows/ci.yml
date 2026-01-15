@@ -82,7 +82,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           allow_issue_writing: false       # prevents GitHub integration errors
           fail_action: false               # never fail workflow on scan issues
-          artifact_name: zap-scan
         env:
           JAVA_OPTS: -Xmx1g
 
