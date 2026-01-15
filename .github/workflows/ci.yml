@@ -80,7 +80,7 @@ jobs:
           cmd_options: '-a'
           token: ${{ secrets.GITHUB_TOKEN }}
           allow_issue_writing: false
-          artifact_name: zap-scan
+          artifact_name: zapscan
         env:
           JAVA_OPTS: -Xmx1g
 
