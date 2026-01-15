@@ -61,33 +61,34 @@ jobs:
             docker.io/ahmedhajjej/devops-api:latest
             docker.io/ahmedhajjej/devops-api:${{ github.sha }}
 
- zap-dast:
-  runs-on: ubuntu-latest
-  needs: test-and-scan
-  if: github.event_name == 'push' && secrets.ZAP_TARGET != ''
-  permissions:
-    contents: write
-    issues: write
-    actions: write
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+  zap-dast:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push' && secrets.ZAP_TARGET != ''
+    permissions:
+      contents: write
+      issues: write
+      actions: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Run OWASP ZAP baseline scan
-      uses: zaproxy/action-baseline@v0.10.0
-      with:
-        target: ${{ secrets.ZAP_TARGET }}
-        cmd_options: '-a'
-        token: ${{ secrets.GITHUB_TOKEN }}
-        allow_issue_writing: false
-      env:
-        JAVA_OPTS: -Xmx1g
+      - name: Run OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: ${{ secrets.ZAP_TARGET }}
+          cmd_options: '-a'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allow_issue_writing: false
+          artifact_name: zap-scan
+        env:
+          JAVA_OPTS: -Xmx1g
 
-    - name: Upload ZAP reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: zap-scan-reports
-        path: |
-          report_json.json
-          report_md.md
-          report_html.html
+      - name: Upload ZAP reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-scan-reports
+          path: |
+            report_json.json
+            report_md.md
+            report_html.html
