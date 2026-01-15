@@ -67,6 +67,7 @@ docker run -p 8000:8000 docker.io/ahmedhajjej/devops-api:local
 - Triggers on push (main/feat) and PR to main.
 - Jobs: pytest; Semgrep (warning mode); build/push image (only on main pushes) to `docker.io/ahmedhajjej/devops-api:{latest,sha}`; ZAP baseline placeholder.
 - Secrets needed: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
+- Re-run CI: open GitHub → Actions → select latest run → "Re-run all jobs" after updating secrets.
 
 ## 9) Observability
 - Logs: JSON to stdout with request_id, method, path, status, latency_ms.
